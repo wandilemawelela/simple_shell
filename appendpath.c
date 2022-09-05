@@ -21,7 +21,7 @@ char *pathappend(char *path, char *cmd)
         path = "";
     buffer = malloc(sizeof(char) * _strlen(path) + _strlen(cmd) + 2);
 
-    if (bufffer == NULL)
+    if (buffer == NULL)
         return (NULL);
     while (path[a])
     {
