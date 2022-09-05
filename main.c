@@ -1,104 +1,109 @@
 #include "shell.h"
-#include <errno.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 /**
-  * Main program for simple shell
-  */
+ * main - Entry point for simple shell project
+ * @argc: number of command line arguments
+ * @argv: pointer to an array of command line arguments
+ * @envp: environment variable
+ * 
+ * Return: Always 0 for success
+ * 
+ */
 
-int main (int argc, char **argv)
+int main (int argc, char *argv[], char *envp[])
 {
-	char *cmd;
+    char *line_buffer = NULL, *pathcmd = NULL, *path = NULL;
+    size_t buffer_size = 0;
+    ssize_t chars_in_line = 0;
+    char **cmd = NULL, **paths = NULL;
+    (void) envp, (void) argv;
 
-	do {
-		/* Prints the prompt string */
-		print_prompt1();
-
-		/* Reads the next line of input. */
-		cmd = read_cmd();
-
-		if (!cmd)
-		{
-			exit (EXIT_SUCCESS); /* If there is an error reading the command exit the shell */
-		}
-
-		/* If the command is empty (i.e. the user pressed ENTER without writing anything, we skip this input and continue with the loop.*/
-		if (cmd[0] == '\0' || strcmp(cmd, "\n") == 0)
-		{
-			free (cmd);
-			continue;
-		}
-
-		/* If the command is exit, we exit the shell. */
-		if (strcmp(cmd, "exit\n") == 0)
-		{
-			free(cmd);
+    if (argc < 1)
+        return (-1);
+    signal(SIGINT, sighandle);
+    while (1)
+    {
+        free_cmds(cmd);
+		free_cmds(paths);
+		free(pathcmd);
+		prompt_printer();
+		chars_in_line = getline(&line_buffer, &buffer_size, stdin);
+		if (chars_in_line < 0)
 			break;
-		}
-
-		/*Otherwise, we echo back the command, free the memory we used to store the command, and continue with the loop.*/
-		printf("%s\n", cmd);
-		free(cmd);
-	} while (1);
-
-	exit (EXIT_SUCCESS);
+		info.ln_count++;
+		if (line_buffer[chars_in_line - 1] == '\n')
+			line_buffer[chars_in_line - 1]  = '\0';
+		cmd = token_maker(line_buffer);
+		if (cmd == NULL || *cmd == NULL || **cmd == '\0')
+			continue;
+		if (check_type(cmd, line_buffer))
+			continue;
+		path = _getpath();
+		paths = token_maker(path);
+		pathcmd = try_paths(paths, cmd[0]);
+		if (pathcmd == NULL)
+			perror(argv[0]);
+		else
+			exec_cmd(pathcmd, cmd);
+    }
+    if (chars_in_line < 0 && flags.interactive)
+		write(STDERR_FILENO, "\n", 1);
+	free(line_buffer);
+	return (0)
 }
 
-char *read_cmd(void)
+
+/**
+ * prompt_printer - prints the prompt if the
+ * shell is in interactive mode
+ * 
+ * Return: void
+ * 
+ */
+
+void prompt_printer(void)
 {
-	char buf[1024];
-	char *ptr = NULL;
-	char ptrlen = 0;
+	if ((isatty(STDIN_FILENO) == 1) && (isatty(STDOUT_FILENO) == 1))
+		flags.interactive = 1;
+	if (flags.interactive)
+		write(STDERR_FILENO, "cisfun$ ", 2);
+}
 
-	while(fgets(buf, 1024, stdin))
-    {
-        int buflen = strlen(buf);
 
-        if(!ptr)
-        {
-            ptr = malloc(buflen+1);
-        }
-        else
-        {
-            char *ptr2 = realloc(ptr, ptrlen+buflen+1);
+/**
+ * sighandle - allows ctrl+C to be printed by the shell
+ * @n: signum
+ * 
+ * Return: void
+ * 
+ */
 
-            if(ptr2)
-            {
-                ptr = ptr2;
-            }
-            else
-            {
-                free(ptr);
-                ptr = NULL;
-            }
-        }
+void sighandle(int n __attribute__((unused)))
+{
+	write(STDERR_FILENO, "\n", 1);
+	write(STDERR_FILENO, "$ ", 2);
+}
 
-        if(!ptr)
-        {
-            fprintf(stderr, "error: failed to alloc buffer: %s\n",
-                    strerror(errno));
-            return NULL;
-        }
+/**
+ * checktype - checks command types to see if it is a built-in
+ * or executable command with path
+ * @cmd: array of pointers to command line arguments
+ * @b: line buffer returned by getline function
+ * 
+ * Return: 1 if the command is executed, 0 otherwise
+ * 
+ */
 
-        strcpy(ptr+ptrlen, buf);
-
-        if(buf[buflen-1] == '\n')
-        {
-            if(buflen == 1 || buf[buflen-2] != '\\')
-            {
-                return ptr;
-            }
-
-            ptr[ptrlen+buflen-2] = '\0';
-            buflen -= 2;
-            print_prompt2();
-        }
-
-        ptrlen += buflen;
-    }
-
-    return ptr;
+int check_type(char **cmd, char *b)
+{
+	if (is_builtin(cmd, b))
+	{
+		return (1);
+	}
+	else if (**cmd == '/')
+	{
+		exec_cmd(cmd[0], cmd);
+		return (1);
+	}
+	return (0);
 }
