@@ -11,7 +11,6 @@
  */
 
 void exec_cmd(char *c, char **cmd)
-void exec_cmd(char *c, char **cmd)
 {
 	pid_t newProcess;
 	int status;

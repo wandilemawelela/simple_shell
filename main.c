@@ -49,7 +49,7 @@ int main (int argc, char *argv[], char *envp[])
     if (chars_in_line < 0 && flags.interactive)
 		write(STDERR_FILENO, "\n", 1);
 	free(line_buffer);
-	return (0)
+	return (0);
 }
 
 
