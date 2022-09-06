@@ -5,25 +5,23 @@
  * @argc: number of command line arguments
  * @argv: pointer to an array of command line arguments
  * @envp: environment variable
- * 
+ *
  * Return: Always 0 for success
- * 
  */
-
-int main (int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[], char *envp[])
 {
-    char *line_buffer = NULL, *pathcmd = NULL, *path = NULL;
-    size_t buffer_size = 0;
-    ssize_t chars_in_line = 0;
-    char **cmd = NULL, **paths = NULL;
-    (void) envp, (void) argv;
+	char *line_buffer = NULL, *pathcmd = NULL, *path = NULL;
+	size_t buffer_size = 0;
+	ssize_t chars_in_line = 0;
+	char **cmd = NULL, **paths = NULL;
+	(void) envp, (void) argv;
 
-    if (argc < 1)
-        return (-1);
-    signal(SIGINT, sighandle);
-    while (1)
-    {
-        free_cmds(cmd);
+	if (argc < 1)
+		return (-1);
+	signal(SIGINT, sighandle);
+	while (1)
+	{
+		free_cmds(cmd);
 		free_cmds(paths);
 		free(pathcmd);
 		prompt_printer();
@@ -45,8 +43,8 @@ int main (int argc, char *argv[], char *envp[])
 			perror(argv[0]);
 		else
 			exec_cmd(pathcmd, cmd);
-    }
-    if (chars_in_line < 0 && flags.interactive)
+	}
+	if (chars_in_line < 0 && flags.interactive)
 		write(STDERR_FILENO, "\n", 1);
 	free(line_buffer);
 	return (0);
@@ -56,11 +54,10 @@ int main (int argc, char *argv[], char *envp[])
 /**
  * prompt_printer - prints the prompt if the
  * shell is in interactive mode
- * 
+ *
  * Return: void
- * 
+ *
  */
-
 void prompt_printer(void)
 {
 	if ((isatty(STDIN_FILENO) == 1) && (isatty(STDOUT_FILENO) == 1))
@@ -73,27 +70,26 @@ void prompt_printer(void)
 /**
  * sighandle - allows ctrl+C to be printed by the shell
  * @n: signum
- * 
+ *
  * Return: void
- * 
+ *
  */
-
 void sighandle(int n __attribute__((unused)))
 {
 	write(STDERR_FILENO, "\n", 1);
 	write(STDERR_FILENO, "$ ", 2);
 }
 
+
 /**
- * checktype - checks command types to see if it is a built-in
+ * check_type - checks command types to see if it is a built-in
  * or executable command with path
  * @cmd: array of pointers to command line arguments
  * @b: line buffer returned by getline function
- * 
+ *
  * Return: 1 if the command is executed, 0 otherwise
- * 
+ *
  */
-
 int check_type(char **cmd, char *b)
 {
 	if (is_builtin(cmd, b))
