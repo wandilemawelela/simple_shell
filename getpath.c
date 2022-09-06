@@ -5,12 +5,12 @@
  * for the global environment vector
  *
  * Return: PATH, if found, or NULL otherwise
- * 
+ *
  */
 
 char *_getpath(void)
 {
-    int j = 0;
+	int j = 0;
 	char **env = environ;
 	char *path = NULL;
 

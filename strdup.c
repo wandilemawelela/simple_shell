@@ -6,12 +6,12 @@
  * @str: string to duplicate
  *
  * Return: pointer to the duplicated string or NULL if it fails
- * 
+ *
  */
 
 char *_strdup(char *str)
 {
-    char *p;
+	char *p;
 	int i, len;
 
 	if (str == NULL)

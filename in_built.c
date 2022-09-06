@@ -7,7 +7,7 @@
  * @b: line_buffer created in main
  *
  * Return: 1 if command is a builtin, 0 otherwise
- * 
+ *
  */
 
 int is_builtin(char **cmd, char *b)

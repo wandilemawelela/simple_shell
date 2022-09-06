@@ -10,7 +10,7 @@
 
 int _strcmp(char *str1, char *str2)
 {
-    int total;
+	int total;
 
 	if (str1 == NULL || str2 == NULL)
 		return (0);
