@@ -5,7 +5,7 @@
  * @str: pointer to an array of command line arguments
  *
  * Return: void
- * 
+ *
  */
 
 void free_cmds(char **str)

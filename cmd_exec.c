@@ -1,15 +1,14 @@
 #include "shell.h"
 
 /**
- * exec_cmd - Creates a new child process, executes a command, 
+ * exec_cmd - Creates a new child process, executes a command,
  * and waits for the child process to update its status
  * @c: command
  * @cmd: vector array of pointers to commands
  *
  * Return: void
- * 
+ *
  */
-
 void exec_cmd(char *c, char **cmd)
 {
 	pid_t newProcess;
