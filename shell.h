@@ -13,6 +13,13 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+/* String Handlers */
+char *_strdup(char *str);
+char *_strchr(char *str, int chr);
+int _strlen(const char *str);
+int _strcmp(char *s1, char *s2);
+int _strncmp(const char *first, const char *second, int n);
+
 /* Command Handlers */
 char *_getpath(void);
 char **token_maker(char *str);
